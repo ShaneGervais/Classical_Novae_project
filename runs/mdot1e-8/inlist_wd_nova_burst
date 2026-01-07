@@ -86,7 +86,7 @@
    alpha_semiconvection = 1d-3
    thermohaline_coeff = 1d3
 
-   mass_change = 1d-9
+   mass_change = 1d-8 ! M_sun per year
    accrete_same_as_surface = .false.
    accretion_h1 = 0.7000 ! Estimate Nomoto 2007
    accretion_h2 = 0
