@@ -6,7 +6,7 @@ In this project we use the MESA software for simulating the stellar evolution du
 
 1. $10^{-8} M_{\odot}/yr$
 
-2. $10^{-8} M_{\odot}/yr$
+2. $10^{-9} M_{\odot}/yr$
 
-3. $10^{-8} M_{\odot}/yr$
+3. $10^{-10} M_{\odot}/yr$
 
