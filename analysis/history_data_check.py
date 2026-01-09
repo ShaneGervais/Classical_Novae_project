@@ -64,7 +64,8 @@ for run_dir in sorted(RUNS_DIR.iterdir()):
         continue
 
     df = read_history(history_file)
-    print(f"\n[DEBUG] Columns in {run_name}:\n{df.columns.tolist()}\n")
+    # USE THIS TO SEE THE HEADER COLUMNS FOR HISTORY.DATA
+    #print(f"\n[DEBUG] Columns in {run_name}:\n{df.columns.tolist()}\n")
 
 
     # Identify relevant columns
@@ -134,6 +135,8 @@ for run_dir in sorted(RUNS_DIR.iterdir()):
     age = df[age_col].values # years
     mass = df[mass_col].values # solar masses
     log_abs_mdot = df[log_abs_mdot_col].values # log10(solar masses / year)
+    log_Lnuc = df[log_Lnuc_col].values if log_Lnuc_col is not None else None
+    time = df[time_col].values if time_col is not None else None
 
     # --- handle mdot consistently ---
     if log_abs_mdot_col is not None:
@@ -145,6 +148,7 @@ for run_dir in sorted(RUNS_DIR.iterdir()):
     M_initial = mass[0]
     M_final = mass[-1]
     delta_M = M_initial - M_final
+    print(f"Mass loss (M_final - M_initial): {delta_M} for {run_name}")
 
     # integrate mdot if available
     if mdot is not None:
@@ -188,6 +192,94 @@ for run_dir in sorted(RUNS_DIR.iterdir()):
         fig.tight_layout()
         fig.savefig(FIG_DIR / f"{run_name}_mdot_vs_age.png", dpi=200)
         plt.close(fig)
+
+    plt.figure()
+    plt.plot(age, log_Lnuc)
+    plt.xlabel("Age (yr)")
+    plt.ylabel("Log10(Nuclear Luminosity)")
+    plt.title(run_name)
+
+    plt.tight_layout()
+    plt.savefig(FIG_DIR / f"{run_name}_log_Lnuc_vs_age.png", dpi=200)
+    plt.close()
+
+    # finding when (age) log_Lnuc changes
+    log_Lnuc_diff = np.gradient(log_Lnuc)
+    change_points = np.where(np.abs(log_Lnuc_diff) > 1e-5)[0]
+    #for cp in change_points:
+    #    print(f"Log10(Nuclear Luminosity) changes at age {age[cp]}")
+    
+    # plot derivative plots
+
+    plt.figure()
+    plt.plot(age, log_Lnuc_diff)
+    plt.xlabel("Age (yr)")
+    plt.ylabel("d(Log10(Nuclear Luminosity))/dt")
+    plt.title(run_name)
+
+    plt.tight_layout()
+    plt.savefig(FIG_DIR / f"{run_name}_log_Lnuc_diff_vs_age.png", dpi=200)
+    plt.close()
+
+    # plot change in mass vs mdot
+    plt.figure()
+    plt.plot(mdot, mass)
+    plt.xlabel("Mass loss rate (Msun / yr)")
+    plt.ylabel("Star mass (Msun)")
+    plt.title(run_name)
+
+    plt.tight_layout()
+    plt.savefig(FIG_DIR / f"{run_name}_mass_vs_mdot.png", dpi=200)
+    plt.close()
+
+    # plot pp, cno, tri_alpha if available in one plot for each
+    plt.figure()
+    if pp_col is not None:
+        plt.plot(age, df[pp_col].values, label="pp Fusion Rate")
+    if cno_col is not None:
+        plt.plot(age, df[cno_col].values, label="CNO Fusion Rate")
+    if tri_alpha_col is not None:
+        plt.plot(age, df[tri_alpha_col].values, label="Triple-alpha Fusion Rate")
+    plt.xlabel("Age (yr)")
+    plt.ylabel("Fusion Rate")
+    plt.title(run_name)
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(FIG_DIR / f"{run_name}_pp+cno+tri_alpha_vs_age.png", dpi=200)
+    plt.close()
+
+    # plotting their derivatives
+    plt.figure()
+    if pp_col is not None:
+        plt.plot(age, np.gradient(df[pp_col].values), label="pp Fusion Rate")
+    if cno_col is not None:
+        plt.plot(age, np.gradient(df[cno_col].values), label="CNO Fusion Rate")
+    if tri_alpha_col is not None:
+        plt.plot(age, np.gradient(df[tri_alpha_col].values), label="Triple-alpha Fusion Rate")
+    plt.xlabel("Age (yr)")
+    plt.ylabel("Fusion Rate Derivative")
+    plt.title(run_name)
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(FIG_DIR / f"{run_name}_pp+cno+tri_alpha_vs_age_derivative.png", dpi=200)
+    plt.close()
+
+    # create another plot of pp+cno+triple_alpha with lognuc overlayed (should probably put this in arbitrary units of 1)
+    plt.figure()
+    if pp_col is not None:
+        plt.plot(age, df[pp_col].values, label="pp Fusion Rate")
+    if cno_col is not None:
+        plt.plot(age, df[cno_col].values, label="CNO Fusion Rate")
+    if tri_alpha_col is not None:
+        plt.plot(age, df[tri_alpha_col].values, label="Triple-alpha Fusion Rate")
+    plt.plot(age, log_Lnuc, label="Log10(Nuclear Luminosity)", linestyle="--")
+    plt.xlabel("Age (yr)")
+    plt.ylabel("Fusion Rate / Log10(Nuclear Luminosity)")
+    plt.title(run_name)
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(FIG_DIR / f"{run_name}_pp+cno+tri_alpha+log_Lnuc_vs_age.png", dpi=200)
+    plt.close()
 
 # -------------------------------------------------
 # Write summary CSV
