@@ -121,6 +121,10 @@ for run_dir in sorted(RUNS_DIR.iterdir()):
     num_iters_col = find_column(df, ["num_iters"])
     model_number_col = find_column(df, ["model_number"])
     num_zones_col = find_column(df, ["num_zones"])
+    center_c12_col = find_column(df, ["center_c12"])
+    center_o16_col = find_column(df, ["center_o16"])
+    surface_c12_col = find_column(df, ["surface_c12"])
+    surface_o16_col = find_column(df, ["surface_o16"])
 
     if age_col is None or mass_col is None or log_abs_mdot_col is None:
         print(f"Warning: Required columns not found in {history_file}. Skipping.")
@@ -140,7 +144,7 @@ for run_dir in sorted(RUNS_DIR.iterdir()):
 
     # --- handle mdot consistently ---
     if log_abs_mdot_col is not None:
-        mdot = df[log_abs_mdot_col].values
+        mdot = 10.0 ** df[log_abs_mdot_col].values
     else:
         mdot = None
 
@@ -148,7 +152,7 @@ for run_dir in sorted(RUNS_DIR.iterdir()):
     M_initial = mass[0]
     M_final = mass[-1]
     delta_M = M_initial - M_final
-    print(f"Mass loss (M_final - M_initial): {delta_M} for {run_name}")
+    print(f"Mass loss (M_final - M_initial): {delta_M:.3e} for {run_name}")
 
     # integrate mdot if available
     if mdot is not None:
@@ -279,6 +283,80 @@ for run_dir in sorted(RUNS_DIR.iterdir()):
     plt.legend()
     plt.tight_layout()
     plt.savefig(FIG_DIR / f"{run_name}_pp+cno+tri_alpha+log_Lnuc_vs_age.png", dpi=200)
+    plt.close()
+
+    t_eruption = age[np.argmax(log_Lnuc)]
+
+    # plot center_c12
+    plt.figure()
+    plt.plot(age, df[center_c12_col].values, label="Center C12 Abundance")
+    plt.xlabel("Age (yr)")
+    plt.ylabel("Center C12 Abundance")
+    plt.title(run_name)
+    #plt.axvline(x=t_eruption, color='r', linestyle='--', label="Eruption Time")
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(FIG_DIR / f"{run_name}_center_c12_vs_age.png", dpi=200)
+    plt.close()
+
+    # plot center_o16
+    plt.figure()
+    plt.plot(age, df[center_o16_col].values, label="Center O16 Abundance")
+    plt.xlabel("Age (yr)")
+    plt.ylabel("Center O16 Abundance")
+    plt.title(run_name)
+    #plt.axvline(x=t_eruption, color='r', linestyle='--', label="Eruption Time")
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(FIG_DIR / f"{run_name}_center_o16_vs_age.png", dpi=200)
+    plt.close()
+
+    # plot surface_c12
+    plt.figure()
+    plt.plot(age, df[surface_c12_col].values, label="Surface C12 Abundance")
+    plt.xlabel("Age (yr)")
+    plt.ylabel("Surface C12 Abundance")
+    plt.title(run_name)
+    #plt.axvline(x=t_eruption, color='r', linestyle='--', label="Eruption Time")
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(FIG_DIR / f"{run_name}_surface_c12_vs_age.png", dpi=200)
+    plt.close()
+
+    # plot surface_o16
+    plt.figure()
+    plt.plot(age, df[surface_o16_col].values, label="Surface O16 Abundance")
+    plt.xlabel("Age (yr)")
+    plt.ylabel("Surface O16 Abundance")
+    plt.title(run_name)
+    #plt.axvline(x=t_eruption, color='r', linestyle='--', label="Eruption Time")
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(FIG_DIR / f"{run_name}_surface_o16_vs_age.png", dpi=200)
+    plt.close()
+
+    # plot surface_o16
+    plt.figure()
+    plt.plot(age, df[surface_o16_col].values, label="Surface O16 Abundance")
+    plt.xlabel("Age (yr)")
+    plt.ylabel("Surface O16 Abundance")
+    plt.title(run_name)
+    #plt.axvline(x=t_eruption, color='r', linestyle='--', label="Eruption Time")
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(FIG_DIR / f"{run_name}_surface_o16_vs_age.png", dpi=200)
+    plt.close()
+
+    # plot total_mass_h1
+    plt.figure()
+    plt.plot(age, df[total_mass_h1_col].values, label="Total Mass H1")
+    plt.xlabel("Age (yr)")
+    plt.ylabel("Total Mass H1")
+    plt.title(run_name)
+    #plt.axvline(x=t_eruption, color='r', linestyle='--', label="Eruption Time")
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(FIG_DIR / f"{run_name}_total_mass_h1_vs_age.png", dpi=200)
     plt.close()
 
 # -------------------------------------------------

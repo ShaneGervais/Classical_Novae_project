@@ -24,7 +24,7 @@ $$ \tau_{acc} \approx \frac{\Delta M_{acc}}{\dot{M}} $$
 
 and others numerically solving nuclear reaction networks, convection model
 
-We start by running MESA for three different mass exchange rates being $\dot{M} = $
+We run MESA for three different mass exchange rates being $\dot{M} = $
 
 1. $10^{-8} M_{\odot}/yr$
 
@@ -40,3 +40,6 @@ $M = 1.1$ $M_{\odot}$
 
 More information in './my_nova/1.1M_lgTc_7.7.mod' and './my_nova/ready.mod' and for each run: './runs/mdot1e-NUMBER/1.1M_lgTc_7.7.mod'.
 
+The results found are that pp-chain is dominant early in the lifetime of the stars and then CNO becomes main source of fuel. See for example:
+
+![alt text](./figures/mdot1e-8_pp+cno+tri_alpha+log_Lnuc_vs_age.png)
