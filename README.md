@@ -1,4 +1,4 @@
-# Classical Novae Project
+# pp-chain and CNO cycle dominance in Classical Novae
 
 This project is to investigate the nuclear interactions between two stars in a binary system. The exchange of matter between, for example, a white dwarf (WD) and a main sequence star, forming an accretion disk in between the stellar objects. White dwarfs are rich in CO and ONe, dying from a 7-8 solar mass star after subsequent H- and He-burning.
 
